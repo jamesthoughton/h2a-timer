@@ -9,6 +9,8 @@ use ffmpeg_dev::sys::{
     AVFormatContext,
 };
 
+mod process;
+
 fn main() {
     println!("starting timer");
 
@@ -29,7 +31,7 @@ fn main() {
 
     let mut ifmt_ctx: *mut AVFormatContext = std::ptr::null_mut();
 
-    unsafe {
+    unsafe { // check video format
         avformat_open_input(&mut ifmt_ctx,
                             input_path_cstr.as_ptr(),
                             std::ptr::null_mut(),
@@ -42,5 +44,11 @@ fn main() {
                        input_path_cstr.as_ptr(),
                        0);
     }
+
+    #[allow(unused_unsafe)]
+    unsafe { // check video codec
+    }
+
+    process::find_white_frame_intervals();
 
 }
