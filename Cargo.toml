@@ -1,0 +1,12 @@
+[package]
+name = "h2a-timer"
+version = "0.1.0"
+authors = ["James Houghton <jhoughton@virginia.edu>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+gstreamer = "0.15.3"
+gstreamer-player = "0.15.3"
+glib = "0.9.3"
