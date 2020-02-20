@@ -20,6 +20,12 @@ use ffmpeg_dev::sys::{
     AVStream,
 };
 
+#[allow(unused_imports)]
+use ffmpeg_dev::sys::{
+    av_log_set_level,
+    AV_LOG_DEBUG,
+};
+
 use ffmpeg_dev::sys::{
     AVMediaType_AVMEDIA_TYPE_VIDEO as AVMEDIA_TYPE_VIDEO,
 };
@@ -63,6 +69,8 @@ fn main() {
         eprintln!("usage: h2a-timer <filename>");
         std::process::exit(-1);
     };
+
+    // unsafe { av_log_set_level(AV_LOG_DEBUG as i32) };
 
     println!("got arg: {}", uri);
 

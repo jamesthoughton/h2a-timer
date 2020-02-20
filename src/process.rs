@@ -46,6 +46,15 @@ fn make_av_packet() -> AVPacket {
     packet
 }
 
+fn is_fullwhite (frame: &mut AVFrame) -> bool {
+    let height: i32 = frame.height;
+    let width: i32 = frame.width;
+
+    print!("height: {} width: {}", height, width);
+
+    return true;
+}
+
 fn process_frame(codec_ctx: &mut AVCodecContext, packet: &mut AVPacket, frame: &mut AVFrame) -> Result<bool, (&'static str, i32)> {
     let mut ret: i32;
     if {
@@ -57,18 +66,23 @@ fn process_frame(codec_ctx: &mut AVCodecContext, packet: &mut AVPacket, frame: &
 
     while {
         ret = unsafe { avcodec_receive_frame(codec_ctx, frame) };
-        if ret != 0 && ret != EOF && ret != unsafe { averror(AV_EAGAIN) } {
+        if ret < 0 && (ret != EOF && ret != unsafe { averror(AV_EAGAIN) }) {
             return Err(("avcodec_receive_frame", ret));
         }
-        ret == AV_EAGAIN
+        ret >= 0
     } { }
+    if ret == unsafe { averror(AV_EAGAIN) } {
+        println!("skipping frame {}", codec_ctx.frame_number);
+        return Ok(false);
+    }
 
+    let white: bool = is_fullwhite(frame);
 
     unsafe {
         av_frame_unref(frame);
     }
 
-    return Ok(false);
+    return Ok(white);
 }
 
 pub fn find_white_frame_intervals(fmt_ctx: &mut AVFormatContext, mut codec_ctx: &mut AVCodecContext, video_stream_idx: usize) -> Vec<(u32, u32)> {
